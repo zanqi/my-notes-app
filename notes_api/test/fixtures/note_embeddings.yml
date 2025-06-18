@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  note: one
+  embedding_id: MyString
+  synced_at: 2025-06-18 10:24:12
+  created_at: 2025-06-18 10:24:12
+  updated_at: 2025-06-18 10:24:12
+
+two:
+  note: two
+  embedding_id: MyString
+  synced_at: 2025-06-18 10:24:12
+  created_at: 2025-06-18 10:24:12
+  updated_at: 2025-06-18 10:24:12
