@@ -575,3 +575,4 @@ langchain_service/*.db
 langchain_service/*.sqlite
 langchain_service/*.sqlite3
 
+langchain_service/**/*.pyc
