@@ -208,6 +208,34 @@ async def get_conversation(conversation_id: str):
         raise HTTPException(status_code=500, detail=f"Get conversation failed: {str(e)}")
 
 
+@app.get("/debug/search/{query}")
+async def debug_search(query: str):
+    """Debug endpoint to test vector store search directly"""
+    try:
+        if not vector_store_service:
+            raise HTTPException(status_code=503, detail="Vector store service not initialized")
+        
+        sources = await vector_store_service.search_similar_notes(query, n_results=5)
+        
+        return {
+            "query": query,
+            "sources_count": len(sources),
+            "sources": [
+                {
+                    "note_id": s.note_id,
+                    "title": s.title,
+                    "relevance_score": s.relevance_score,
+                    "content_snippet": s.content_snippet[:100] + "..." if len(s.content_snippet) > 100 else s.content_snippet
+                }
+                for s in sources
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Debug search failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Debug search failed: {str(e)}")
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8001"))
     host = os.getenv("HOST", "0.0.0.0")

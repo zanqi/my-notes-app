@@ -93,13 +93,13 @@ class VectorStoreService:
             # Create document ID
             doc_id = self._create_document_id(note.id)
             
-            # Prepare metadata
+            # Prepare metadata (ChromaDB only accepts primitive types)
             metadata = {
                 "note_id": note.id,
                 "title": note.title,
                 "created_at": note.created_at.isoformat(),
                 "updated_at": note.updated_at.isoformat(),
-                "tags": note.tags,
+                "tags": ", ".join(note.tags) if note.tags else "",  # Convert list to string
                 "category": note.category or "",
                 "content_length": len(note.content)
             }
@@ -162,8 +162,15 @@ class VectorStoreService:
     async def search_similar_notes(self, query: str, n_results: int = 5) -> List[Source]:
         """Search for notes similar to the query"""
         try:
+            logger.info(f"Searching for query: '{query}' with n_results={n_results}")
+            
+            # Check collection count first
+            count = self.collection.count()
+            logger.info(f"Collection has {count} documents")
+            
             # Generate query embedding
             query_embedding = self.embeddings_model.encode(query).tolist()
+            logger.info(f"Generated embedding of length: {len(query_embedding)}")
             
             # Search in ChromaDB
             results = self.collection.query(
@@ -172,17 +179,33 @@ class VectorStoreService:
                 include=["metadatas", "documents", "distances"]
             )
             
+            logger.info(f"ChromaDB query results structure: {list(results.keys())}")
+            logger.info(f"Results IDs: {results.get('ids')}")
+            logger.info(f"Results distances: {results.get('distances')}")
+            
             sources = []
             
             if results['ids'] and results['ids'][0]:
+                logger.info(f"Processing {len(results['ids'][0])} results")
                 for i in range(len(results['ids'][0])):
                     metadata = results['metadatas'][0][i]
                     document = results['documents'][0][i]
                     distance = results['distances'][0][i]
                     
+                    logger.info(f"Result {i}: distance={distance}, title={metadata.get('title', 'N/A')}")
+                    
                     # Convert distance to similarity score (0-1, higher is better)
-                    # ChromaDB uses cosine distance, so similarity = 1 - distance
-                    relevance_score = max(0, 1 - distance)
+                    # ChromaDB distance can vary - let's handle different ranges
+                    if distance <= 1.0:
+                        # Standard case: cosine distance (0-2 range, where 0 is identical)
+                        relevance_score = max(0, 1 - distance)
+                    else:
+                        # Distance > 1: convert to 0-1 range using inverse
+                        relevance_score = 1 / (1 + distance)
+                    
+                    # Ensure minimum relevance for exact matches
+                    if distance < 0.1:
+                        relevance_score = max(relevance_score, 0.9)
                     
                     # Extract content snippet (first 200 chars)
                     content_snippet = document[:200] + "..." if len(document) > 200 else document
@@ -197,6 +220,8 @@ class VectorStoreService:
                     )
                     
                     sources.append(source)
+            else:
+                logger.warning("No results returned from ChromaDB query")
             
             logger.info(f"Found {len(sources)} similar notes for query: {query[:50]}...")
             return sources

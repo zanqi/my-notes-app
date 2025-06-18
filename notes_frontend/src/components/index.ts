@@ -2,6 +2,9 @@
 export { default as NoteCard } from './NoteCard';
 export { default as NoteModal } from './NoteModal';
 
+// Navigation
+export { default as Navigation } from './Navigation';
+
 // Chat components
 export { default as ChatContainer } from './ChatContainer';
 export { default as ChatMessage } from './ChatMessage';
