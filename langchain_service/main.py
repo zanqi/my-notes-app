@@ -12,6 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 from app.services.rag_service import RAGService
 from app.services.vector_store_service import VectorStoreService
@@ -63,9 +67,10 @@ app = FastAPI(
 )
 
 # Add CORS middleware
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:8000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8000"],  # Rails and Next.js
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -204,15 +209,18 @@ async def get_conversation(conversation_id: str):
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8001))
+    port = int(os.getenv("PORT", "8001"))
     host = os.getenv("HOST", "0.0.0.0")
+    reload = os.getenv("RELOAD", "true").lower() == "true"
+    log_level = os.getenv("LOG_LEVEL", "info").lower()
     
     logger.info(f"Starting server on {host}:{port}")
+    logger.info(f"Reload mode: {reload}")
     
     uvicorn.run(
         "main:app",
         host=host,
         port=port,
-        reload=True,
-        log_level="info"
+        reload=reload,
+        log_level=log_level
     ) 
