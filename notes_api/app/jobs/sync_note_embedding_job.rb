@@ -33,7 +33,7 @@ class SyncNoteEmbeddingJob < ApplicationJob
 
   def sync_with_langchain_service(note, embedding)
     # This will make HTTP request to our Python LangChain service
-    uri = URI('http://localhost:8001/sync_note')
+    uri = URI('http://localhost:8003/add_note')
     
     payload = {
       note_id: note.id,
