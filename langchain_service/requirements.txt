@@ -1,11 +1,16 @@
 # Web framework
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
+fastapi==0.115.6
+uvicorn[standard]==0.32.0
 
 # LangChain and AI
-langchain==0.1.0
-langchain-openai==0.0.2
-openai==1.6.1
+langchain==0.3.13
+langchain-openai==0.2.8
+langchain-core==0.3.28
+langchain-text-splitters==0.3.4
+langgraph==0.2.60
+langchain-community==0.3.13
+tavily-python==0.5.0
+openai==1.54.0
 
 # Vector store and embeddings
 chromadb==0.4.18
@@ -13,20 +18,20 @@ sentence-transformers==2.7.0
 
 # HTTP client and utilities
 httpx==0.25.2
-requests==2.31.0
+requests==2.32.3
 
 # Environment and configuration
-python-dotenv==1.0.0
-pydantic==2.5.1
-pydantic-settings==2.1.0
+python-dotenv==1.0.1
+pydantic==2.10.4
+pydantic-settings==2.7.0
 
 # Data handling
-pandas==2.1.4
-numpy==1.24.4
+pandas==2.2.3
+numpy==1.26.4
 
 # Logging and monitoring
 structlog==23.2.0
 
 # Development dependencies
-pytest==7.4.3
-pytest-asyncio==0.21.1 
+pytest==8.3.4
+pytest-asyncio==0.24.0 
