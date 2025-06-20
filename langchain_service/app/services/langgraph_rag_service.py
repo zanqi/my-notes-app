@@ -298,11 +298,22 @@ class LangGraphRAGService:
             web_results = self.web_search_tool.invoke({"query": question})
             # Convert web results to Source objects
             for i, result in enumerate(web_results):
+                # Calculate relevance score based on search result ranking and available score
+                # Tavily returns results ranked by relevance, so first result is most relevant
+                base_score = max(0.95 - (i * 0.15), 0.65)  # 95%, 80%, 65% for top 3 results
+                
+                # Use Tavily's score if available, otherwise use ranking-based score
+                tavily_score = result.get("score", base_score)
+                if isinstance(tavily_score, (int, float)) and 0 <= tavily_score <= 1:
+                    relevance_score = tavily_score
+                else:
+                    relevance_score = base_score
+                
                 web_source = Source(
                     note_id=-1 - i,  # Use negative IDs for web results to distinguish from notes
                     title=result.get("title", "Web Result"),
                     content_snippet=result.get("content", ""),
-                    relevance_score=0.5,
+                    relevance_score=relevance_score,
                     created_at=datetime.now(),
                     updated_at=datetime.now()
                 )

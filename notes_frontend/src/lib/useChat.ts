@@ -6,6 +6,7 @@ import { api, ChatMessage, ChatResponse, Source } from './api';
 export interface UseChatOptions {
   conversationId?: string;
   includeSources?: boolean;
+  mode?: 'traditional' | 'agent';
   onError?: (error: Error) => void;
   onResponse?: (response: ChatResponse) => void;
 }
@@ -66,6 +67,7 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
         message,
         conversation_id: conversationId || undefined,
         include_sources: options.includeSources ?? true,
+        mode: options.mode || 'traditional',
       });
 
       // Update conversation ID if it's new

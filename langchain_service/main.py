@@ -113,9 +113,17 @@ async def chat(request: ChatRequest):
         if not rag_service:
             raise HTTPException(status_code=503, detail="RAG service not initialized")
         
-        logger.info(f"Processing chat request: {request.message[:100]}...")
+        logger.info(f"Processing chat request ({request.mode} mode): {request.message[:100]}...")
         
-        response = await rag_service.chat(
+        # Create a RAG service instance with the requested mode
+        if not vector_store_service:
+            raise HTTPException(status_code=503, detail="Vector store service not initialized")
+            
+        use_langgraph = request.mode == "agent"
+        mode_rag_service = RAGService(vector_store_service, use_langgraph=use_langgraph)
+        await mode_rag_service.initialize()
+        
+        response = await mode_rag_service.chat(
             message=request.message,
             conversation_id=request.conversation_id,
             include_sources=request.include_sources

@@ -12,6 +12,7 @@ class ChatRequest(BaseModel):
     message: str = Field(..., description="User's message")
     conversation_id: Optional[str] = Field(None, description="Conversation ID for context")
     include_sources: bool = Field(True, description="Whether to include source notes in response")
+    mode: Optional[str] = Field("traditional", description="RAG mode: 'traditional' or 'agent'")
 
 
 class Source(BaseModel):

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useChat, useNotesSync } from '@/lib';
 import ChatHeader from './ChatHeader';
 import ChatMessage from './ChatMessage';
@@ -12,6 +12,7 @@ interface ChatContainerProps {
 
 export default function ChatContainer({ className = '' }: ChatContainerProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [selectedMode, setSelectedMode] = useState<'traditional' | 'agent'>('traditional');
   
   // Chat functionality
   const { 
@@ -23,6 +24,7 @@ export default function ChatContainer({ className = '' }: ChatContainerProps) {
     isHealthy,
   } = useChat({
     includeSources: true,
+    mode: selectedMode,
     onError: (error) => {
       console.error('Chat error:', error);
     },
@@ -72,6 +74,8 @@ export default function ChatContainer({ className = '' }: ChatContainerProps) {
         onSyncNotes={syncAllNotes}
         onClearChat={hasMessages ? handleClearChat : undefined}
         isSyncing={isSyncing}
+        selectedMode={selectedMode}
+        onModeChange={setSelectedMode}
       />
 
       {/* Error banner */}

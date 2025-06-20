@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_231232) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_20_175231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,5 +72,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_231232) do
   add_foreign_key "chat_sessions", "conversations"
   add_foreign_key "chat_sessions", "notes", column: "target_note_id"
   add_foreign_key "messages", "conversations"
-  add_foreign_key "note_embeddings", "notes"
+  add_foreign_key "note_embeddings", "notes", on_delete: :cascade
 end

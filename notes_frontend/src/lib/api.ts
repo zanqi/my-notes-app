@@ -46,6 +46,7 @@ export interface ChatRequest {
   message: string;
   conversation_id?: string;
   include_sources?: boolean;
+  mode?: 'traditional' | 'agent';
 }
 
 export interface ChatResponse {
