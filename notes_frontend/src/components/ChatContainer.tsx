@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useChat, useNotesSync } from '@/lib';
-import ChatHeader from './ChatHeader';
-import ChatMessage from './ChatMessage';
-import ChatInput from './ChatInput';
+import { ChatHeader, ChatMessage, ChatInput, SourceList } from '@/components';
 
 interface ChatContainerProps {
   className?: string;
@@ -74,8 +72,6 @@ export default function ChatContainer({ className = '' }: ChatContainerProps) {
         onSyncNotes={syncAllNotes}
         onClearChat={hasMessages ? handleClearChat : undefined}
         isSyncing={isSyncing}
-        selectedMode={selectedMode}
-        onModeChange={setSelectedMode}
       />
 
       {/* Error banner */}
@@ -196,6 +192,8 @@ export default function ChatContainer({ className = '' }: ChatContainerProps) {
             ? "Sync your notes first, then ask questions..."
             : "Ask about your notes..."
         }
+        selectedMode={selectedMode}
+        onModeChange={setSelectedMode}
       />
     </div>
   );

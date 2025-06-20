@@ -1,7 +1,6 @@
 'use client';
 
 import { ServiceHealth } from '@/lib';
-import ModeSelector from './ModeSelector';
 
 interface ChatHeaderProps {
   isHealthy: boolean;
@@ -10,8 +9,6 @@ interface ChatHeaderProps {
   onSyncNotes?: () => void;
   onClearChat?: () => void;
   isSyncing?: boolean;
-  selectedMode?: 'traditional' | 'agent';
-  onModeChange?: (mode: 'traditional' | 'agent') => void;
 }
 
 export default function ChatHeader({ 
@@ -20,9 +17,7 @@ export default function ChatHeader({
   vectorStoreCount = 0,
   onSyncNotes,
   onClearChat,
-  isSyncing = false,
-  selectedMode = 'traditional',
-  onModeChange
+  isSyncing = false
 }: ChatHeaderProps) {
   return (
     <div className="border-b border-gray-200 bg-white px-6 py-4">
@@ -50,19 +45,8 @@ export default function ChatHeader({
           </div>
         </div>
 
-        {/* Mode selector and actions */}
+        {/* Actions */}
         <div className="flex items-center gap-4">
-          {/* Mode selector */}
-          {onModeChange && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-gray-600">Mode:</span>
-              <ModeSelector
-                selectedMode={selectedMode}
-                onModeChange={onModeChange}
-                disabled={!isHealthy || isSyncing}
-              />
-            </div>
-          )}
           {/* Vector store info */}
           {isHealthy && (
             <div className="text-xs text-gray-600 bg-gray-50 px-3 py-2 rounded-lg">
