@@ -10,9 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_18_172412) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_231232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "chat_sessions", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.string "session_type", default: "query", null: false
+    t.string "status", default: "active", null: false
+    t.bigint "conversation_id"
+    t.bigint "target_note_id"
+    t.text "draft_title"
+    t.text "draft_content"
+    t.text "original_content"
+    t.json "metadata", default: {}
+    t.text "edit_instructions"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_chat_sessions_on_conversation_id"
+    t.index ["session_id"], name: "index_chat_sessions_on_session_id", unique: true
+    t.index ["session_type", "status"], name: "index_chat_sessions_on_session_type_and_status"
+    t.index ["started_at"], name: "index_chat_sessions_on_started_at"
+    t.index ["target_note_id"], name: "index_chat_sessions_on_target_note_id"
+  end
 
   create_table "conversations", force: :cascade do |t|
     t.string "title"
@@ -47,6 +69,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_18_172412) do
     t.index ["title"], name: "index_notes_on_title"
   end
 
+  add_foreign_key "chat_sessions", "conversations"
+  add_foreign_key "chat_sessions", "notes", column: "target_note_id"
   add_foreign_key "messages", "conversations"
   add_foreign_key "note_embeddings", "notes"
 end
